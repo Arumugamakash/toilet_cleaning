@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot name="wsingle4">
+  <link name="toilet_base_link">
+    <inertial>
+      <origin xyz="-0.10609 0.066944 0.19555" rpy="0 0 0" />
+      <mass value="3426.6" />
+      <inertia
+        ixx="6257.6"
+        ixy="-22.566"
+        ixz="237.46"
+        iyy="6334.3"
+        iyz="-184.53"
+        izz="10939" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://tc_manipulation/meshes/toilet/wsingle4_base_link.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.89412 0.89412 0.89412 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://tc_manipulation/meshes/toilet/wsingle4_base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <link
+    name="toilet">
+    <inertial>
+      <origin
+        xyz="-0.081462 -1.4865E-07 0.4501"
+        rpy="0 0 0" />
+      <mass
+        value="0.013592" />
+      <inertia
+        ixx="1.1581E-06"
+        ixy="4.3125E-23"
+        ixz="-3.5799E-21"
+        iyy="1.4196E-06"
+        iyz="6.2356E-21"
+        izz="8.3267E-07" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://tc_manipulation/meshes/toilet/wsingle4_toilet.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.89412 0.89412 0.89412 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://tc_manipulation/meshes/toilet/wsingle4_toilet.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="toilet_joint" type="fixed">
+    <origin  xyz="-0.41273 0 0" rpy="0 0 0" />
+    <parent link="toilet_base_link" />
+    <child link="toilet" />
+    <axis xyz="0 0 0" />
+  </joint>
+  <link
+    name="seat">
+    <inertial>
+      <origin
+        xyz="0.17458 -0.015619 0.04122"
+        rpy="0 0 0" />
+      <mass
+        value="0.31563" />
+      <inertia
+        ixx="0.0046157"
+        ixy="1.8019E-05"
+        ixz="-5.6965E-05"
+        iyy="0.0091257"
+        iyz="4.5887E-06"
+        izz="0.0045172" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://tc_manipulation/meshes/toilet/wsingle4_seat.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.89412 0.89412 0.89412 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://tc_manipulation/meshes/toilet/wsingle4_seat.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="seat_joint"
+    type="revolute">
+    <origin
+      xyz="-0.07218 0.043 0.42234"
+      rpy="1.5708 0 0" />
+    <parent
+      link="toilet" />
+    <child
+      link="seat" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="0.001"
+      upper="1.62"
+      effort="10"
+      velocity="1.0" />
+  </joint>
+  <link
+    name="lid">
+    <inertial>
+      <origin
+        xyz="0.22235 0.010588 0.00015845"
+        rpy="0 0 0" />
+      <mass
+        value="1.845" />
+      <inertia
+        ixx="0.0226"
+        ixy="4.6584E-05"
+        ixz="5.611E-05"
+        iyy="0.053363"
+        iyz="2.0611E-06"
+        izz="0.030995" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://tc_manipulation/meshes/toilet/wsingle4_lid.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.89412 0.89412 0.89412 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://tc_manipulation/meshes/toilet/wsingle4_lid.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="lid_joint" type="revolute">
+    <origin xyz="-0.07218 0 0.42234" rpy="1.5708 0 0" />
+    <parent link="toilet" />
+    <child link="lid" />
+    <axis xyz="0 0 1" />
+    <limit lower="0.001" upper="1.63" effort="10" velocity="1.0" /> 
+  </joint>
+  <link
+    name="large_button">
+    <inertial>
+      <origin
+        xyz="1.1102E-16 -0.00055598 -0.006"
+        rpy="0 0 0" />
+      <mass
+        value="0.0067193" />
+      <inertia
+        ixx="3.2853E-07"
+        ixy="1.3933E-21"
+        ixz="9.6837E-14"
+        iyy="5.6761E-07"
+        iyz="2.4496E-21"
+        izz="7.4149E-07" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://tc_manipulation/meshes/toilet/wsingle4_large_button.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.89412 0.89412 0.89412 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://tc_manipulation/meshes/toilet/wsingle4_large_button.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="large_button_axis"
+    type="prismatic">
+    <origin
+      xyz="-0.19316 0.0037146 0.8665"
+      rpy="0 0 0" />
+    <parent
+      link="toilet" />
+    <child
+      link="large_button" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-0.01"
+      upper="0"
+      effort="10"
+      velocity="0.1" />
+  </joint>
+  <link
+    name="small_button">
+    <inertial>
+      <origin
+        xyz="-1.1102E-16 3.3085E-05 -0.006"
+        rpy="0 0 0" />
+      <mass
+        value="0.0022082" />
+      <inertia
+        ixx="5.0274E-08"
+        ixy="1.9486E-22"
+        ixz="1.8954E-12"
+        iyy="7.2318E-08"
+        iyz="3.9009E-23"
+        izz="7.2993E-08" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://tc_manipulation/meshes/toilet/wsingle4_small_button.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0 0 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://tc_manipulation/meshes/toilet/wsingle4_small_button.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="small_button_axis"
+    type="prismatic">
+    <origin
+      xyz="-0.19316 -0.0094082 0.8665"
+      rpy="0 0 0" />
+    <parent
+      link="toilet" />
+    <child
+      link="small_button" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-0.01"
+      upper="0"
+      effort="10"
+      velocity="0.1" />
+  </joint>
+
+  <ros2_control name="GazeboSystem" type="system">
+    <hardware>
+        <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+    </hardware>
+    <joint name="seat_joint">
+        <command_interface name="position"/>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+    </joint>
+    <joint name="lid_joint">
+        <command_interface name="position"/>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+    </joint>
+    <joint name="large_button_axis">
+        <command_interface name="position"/>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+    </joint>
+    <joint name="small_button_axis">
+        <command_interface name="position"/>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+    </joint>
+</ros2_control>
+
+  <gazebo>
+    <plugin filename="libgz_ros2_control-system.so" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+      <parameters>$(find tc_manipulation)/config/toilet_controller.yaml</parameters>
+      <ros>
+        <namespace>/toilet</namespace>
+      </ros>
+    </plugin>
+  </gazebo>
+
+</robot>
+  

@@ -1,0 +1,74 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 200
+    use_sim_time: true  
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+    arm_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+    force_torque_sensor_broadcaster:
+      type: force_torque_sensor_broadcaster/ForceTorqueSensorBroadcaster
+
+    admittance_controller:
+      type: admittance_controller/AdmittanceController
+
+arm_controller:
+  ros__parameters:
+    use_sim_time: true 
+    joints:
+      - joint1
+      - joint2
+      - joint3
+      - joint4
+      - joint5
+      - joint6
+      - joint7
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
+
+force_torque_sensor_broadcaster:
+  ros__parameters:
+    use_sim_time: true
+    sensor_name: tcp_fts_sensor
+    frame_id: gripper_mount_joint
+
+admittance_controller:
+  ros__parameters:
+    use_sim_time: true
+    joints:
+      - joint1
+      - joint2
+      - joint3
+      - joint4
+      - joint5
+      - joint6
+      - joint7
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
+    chainable_command_interfaces:
+      - position
+    kinematics:
+      plugin_name: kinematics_interface_kdl/KinematicsInterfaceKDL
+      plugin_package: kinematics_interface
+      base: link_base
+      tip: link7
+      alpha: 0.0005
+    ft_sensor:
+      name: tcp_fts_sensor
+      frame: gripper_mount_joint
+      filter_coefficient: 0.005
+    control:
+      frame: link7
+    admittance:
+      mass: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+      damping: [15.0, 15.0, 15.0, 15.0, 15.0, 15.0]
+      stiffness: [50.0, 50.0, 50.0, 50.0, 50.0, 50.0]

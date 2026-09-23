@@ -1,0 +1,502 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="xarm7">
+  <xacro:macro name="xarm7_urdf" params="prefix
+    joint1_lower_limit:=${-2.0*pi}  joint1_upper_limit:=${2.0*pi}
+    joint2_lower_limit:=${-2.059}  joint2_upper_limit:=${2.0944}
+    joint3_lower_limit:=${-2.0*pi}  joint3_upper_limit:=${2.0*pi}
+    joint4_lower_limit:=${-0.19198}  joint4_upper_limit:=${3.927}
+    joint5_lower_limit:=${-2.0*pi}  joint5_upper_limit:=${2.0*pi}
+    joint6_lower_limit:=${-1.69297}  joint6_upper_limit:=${pi}
+    joint7_lower_limit:=${-2.0*pi}  joint7_upper_limit:=${2.0*pi}
+    rs_d435i:=false">
+
+    <material name="xarm_Black">
+      <color rgba="0.0 0.0 0.0 1.0"/>
+    </material>
+
+    <material name="xarm_Red">
+      <color rgba="0.8 0.0 0.0 1.0"/>
+    </material>
+
+    <material name="xarm_White">
+      <color rgba="1.0 1.0 1.0 1.0"/>
+    </material>
+
+    <material name="xarm_Silver">
+      <color rgba="0.753 0.753 0.753 1.0"/>
+    </material>
+
+    <link name="${prefix}link_base">
+    <inertial>
+      <origin xyz="-0.021131 -0.0016302 0.056488" rpy="0 0 0" />
+      <mass value="0.88556" />
+      <inertia
+        ixx="0.0030595"
+        ixy="0.00012259"
+        ixz="-0.00062705"
+        iyy="0.0037783"
+        iyz="0.00027023"
+        izz="0.0020125" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://tc_manipulation/meshes/xarm7/visual/link_base.STL" />
+      </geometry>
+      <material name="xarm_White" />
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://tc_manipulation/meshes/xarm7/visual/link_base.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="${prefix}link1">
+    <inertial>
+      <origin xyz="-0.0042142 0.02821 -0.0087788" rpy="0 0 0" />
+      <mass value="0.42603" />
+      <inertia
+        ixx="0.0014243"
+        ixy="3.9946E-05"
+        ixz="4.7078E-06"
+        iyy="0.00123"
+        iyz="-0.00026073"
+        izz="0.00099229" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://tc_manipulation/meshes/xarm7/visual/link1.STL" />
+      </geometry>
+      <material name="xarm_White" />
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://tc_manipulation/meshes/xarm7/visual/link1.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="${prefix}joint1" type="revolute">
+    <origin xyz="0 0 0.267" rpy="0 0 0" />
+    <parent link="${prefix}link_base" />
+    <child link="${prefix}link1" />
+    <axis xyz="0 0 1" />
+    <limit lower="${joint1_lower_limit}" upper="${joint1_upper_limit}" effort="50" velocity="3.14" />
+    <dynamics damping="10" friction="1" />
+  </joint>
+
+  <link name="${prefix}link2">
+    <inertial>
+      <origin xyz="-3.3178E-05 -0.12849 0.026337" rpy="0 0 0" />
+      <mass value="0.56095" />
+      <inertia
+        ixx="0.0031915"
+        ixy="3.0892E-06"
+        ixz="2.8729E-06"
+        iyy="0.0017468"
+        iyz="-0.0010241"
+        izz="0.00235" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://tc_manipulation/meshes/xarm7/visual/link2.STL" />
+      </geometry>
+      <material name="xarm_White" />
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://tc_manipulation/meshes/xarm7/visual/link2.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="${prefix}joint2" type="revolute">
+    <origin xyz="0 0 0" rpy="-1.5708 0 0" />
+    <parent link="${prefix}link1" />  
+    <child link="${prefix}link2" />
+    <axis xyz="0 0 1" />
+    <limit lower="${joint2_lower_limit}" upper="${joint2_upper_limit}" effort="50" velocity="3.14" />
+    <dynamics damping="10" friction="1" />
+  </joint>
+
+  <link name="${prefix}link3">
+    <inertial>
+      <origin xyz="0.04223 -0.023258 -0.0096674" rpy="0 0 0" />
+      <mass value="0.44463" />
+      <inertia
+        ixx="0.0011454"
+        ixy="0.0001654"
+        ixz="-0.0001951"
+        iyy="0.0010503"
+        iyz="0.00012027"
+        izz="0.0011083" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://tc_manipulation/meshes/xarm7/visual/link3.STL" />
+      </geometry>
+      <material name="xarm_White" />
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://tc_manipulation/meshes/xarm7/visual/link3.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="${prefix}joint3" type="revolute">
+    <origin xyz="0 -0.293 0" rpy="1.5708 0 0" />
+    <parent link="${prefix}link2" />
+    <child link="${prefix}link3" />
+    <axis xyz="0 0 1" />
+    <limit lower="${joint3_lower_limit}" upper="${joint3_upper_limit}" effort="30" velocity="3.14" />
+    <dynamics damping="5" friction="1" />
+  </joint>
+
+  <link name="${prefix}link4">
+    <inertial>
+      <origin xyz="0.067148 -0.10732 0.024479" rpy="0 0 0" />
+      <mass value="0.52387" />
+      <inertia
+        ixx="0.0026033"
+        ixy="0.00053379"
+        ixz="0.00036314"
+        iyy="0.0017649"
+        iyz="-0.00083253"
+        izz="0.0022431" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://tc_manipulation/meshes/xarm7/visual/link4.STL" />
+      </geometry>
+      <material name="xarm_White" />
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://tc_manipulation/meshes/xarm7/visual/link4.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="${prefix}joint4" type="revolute">
+    <origin xyz="0.0525 0 0" rpy="1.5708 0 0" />
+    <parent link="${prefix}link3" />
+    <child link="${prefix}link4" />
+    <axis xyz="0 0 1" />
+    <limit lower="${joint4_lower_limit}" upper="${joint4_upper_limit}" effort="30" velocity="3.14" />
+    <dynamics damping="5" friction="1" />
+  </joint>
+
+  <link name="${prefix}link5">
+    <inertial>
+      <origin xyz="-0.00023397 0.036705 -0.080064" rpy="0 0 0" />
+      <mass value="0.18554" />
+      <inertia
+        ixx="0.00099549"
+        ixy="8.9957E-07"
+        ixz="8.5285E-07"
+        iyy="0.0008853"
+        iyz="-0.00025682"
+        izz="0.00035048" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://tc_manipulation/meshes/xarm7/visual/link5.STL" />
+      </geometry>
+      <material name="xarm_White" />
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://tc_manipulation/meshes/xarm7/visual/link5.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="${prefix}joint5" type="revolute">
+    <origin xyz="0.0775 -0.3425 0" rpy="1.5708 0 0" />
+    <parent link="${prefix}link4" />
+    <child link="${prefix}link5" />
+    <axis xyz="0 0 1" />
+    <limit lower="${joint5_lower_limit}" upper="${joint5_upper_limit}" effort="30" velocity="3.14" />
+    <dynamics damping="5" friction="1" />
+  </joint>
+
+  <link name="${prefix}link6">
+    <inertial>
+      <origin xyz="0.058911 0.028469 0.0068428" rpy="0 0 0" />
+      <mass value="0.31344" />
+      <inertia
+        ixx="0.00052034"
+        ixy="-0.00014989"
+        ixz="0.00011658"
+        iyy="0.00067968"
+        iyz="6.116E-05"
+        izz="0.00078345" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://tc_manipulation/meshes/xarm7/visual/link6.STL" />
+      </geometry>
+      <material name="xarm_White" />
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://tc_manipulation/meshes/xarm7/visual/link6.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="${prefix}joint6" type="revolute">
+    <origin xyz="0 0 0" rpy="1.5708 0 0" />
+    <parent link="${prefix}link5" />
+    <child link="${prefix}link6" />
+    <axis xyz="0 0 1" />
+    <limit lower="${joint6_lower_limit}" upper="${joint6_upper_limit}" effort="20" velocity="3.14" />
+    <dynamics damping="2" friction="1" />
+  </joint>
+
+  <link name="${prefix}link7">
+    <inertial>
+      <origin xyz="-1.5846E-05 -0.0046377 -0.012705" rpy="0 0 0" />
+      <mass value="0.31468" />
+      <inertia
+        ixx="0.00016985"
+        ixy="1.1102E-07"
+        ixz="5.1075E-08"
+        iyy="0.00011924"
+        iyz="-2.1251E-06"
+        izz="0.00026032" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://tc_manipulation/meshes/xarm7/visual/link7.STL" />
+      </geometry>
+      <material name="xarm_Silver" />
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://tc_manipulation/meshes/xarm7/collision/end_tool.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="${prefix}joint7" type="revolute">
+    <origin xyz="0.076 0.097 0" rpy="-1.5708 0 0" />
+    <parent link="${prefix}link6" />
+    <child link="${prefix}link7" />
+    <axis xyz="0 0 1" />
+    <limit lower="${joint7_lower_limit}" upper="${joint7_upper_limit}" effort="20" velocity="3.14" />
+    <dynamics damping="2" friction="1" />
+  </joint>
+
+  <link name="${prefix}gripper_base_link">
+    <inertial>
+      <origin xyz="-0.0066633 -2.2204E-16 0.0062977" rpy="0 0 0" />
+      <mass value="0.024838" />
+      <inertia
+        ixx="1.0311E-05"
+        ixy="-2.0599E-21"
+        ixz="3.4018E-06"
+        iyy="1.6173E-05"
+        iyz="5.196E-21"
+        izz="2.0363E-05" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://tc_manipulation/meshes/xarm7/visual/gripper_base_link6.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://tc_manipulation/meshes/xarm7/visual/gripper_base_link6.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="${prefix}gripper_mount_joint" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 3.1708" /> 
+    <!-- # 0 ${pi} 0 -->
+    <parent link="${prefix}link7" />
+    <child link="${prefix}gripper_base_link" />
+  </joint>
+
+
+  <link name="${prefix}camera_link">
+    <visual>
+        <geometry>
+            <box size="0.01 0.03 0.03"/>
+        </geometry>
+        <material name="black">
+          <color rgba="0 0 0 1"/>
+        </material>
+    </visual>
+    <collision>
+        <geometry>
+            <box size="0.01 0.03 0.03"/>
+        </geometry>
+    </collision>
+  </link>
+
+  <!-- <joint name="${prefix}camera_joint" type="fixed">
+    <parent link="${prefix}link6"/>
+    <child link="${prefix}camera_link"/>
+    <origin xyz="0.13 0.0 0.0" rpy="0 0 1.5708"/>
+  </joint>
+
+  <link name="${prefix}camera_optical_link"/>
+
+  <joint name="${prefix}camera_optical_joint" type="fixed">
+    <parent link="${prefix}camera_link"/>
+    <child link="${prefix}camera_optical_link"/>
+    <origin xyz="0 0 0" rpy="-1.5708 0 -1.5708"/>
+  </joint> -->
+
+   <joint name="${prefix}camera_joint" type="fixed">
+    <parent link="${prefix}link6"/>
+    <child link="${prefix}camera_link"/>
+    <origin xyz="0.126 0.05 0.0" rpy="0 0 1.5708"/>
+  </joint>
+
+  <link name="${prefix}camera_optical_link"/>
+
+  <joint name="${prefix}camera_optical_joint" type="fixed">
+    <parent link="${prefix}camera_link"/>
+    <child link="${prefix}camera_optical_link"/>
+    <origin xyz="0 0 0" rpy="-1.5708 0 -1.5708"/>
+  </joint>
+
+  <gazebo reference="${prefix}camera_link">
+    <sensor name="rgbd_camera" type="rgbd_camera">
+      <pose>0 0 0 0 0 0</pose>
+      <always_on>true</always_on>
+      <update_rate>10</update_rate>
+      <topic>/camera</topic>
+      <gz_frame_id>${prefix}camera_optical_link</gz_frame_id>
+      <camera name="depth">
+        <horizontal_fov>0.7</horizontal_fov>
+        <image> 
+          <width>320</width>
+          <height>240</height>
+          <format>R8G8B8</format>
+        </image>
+        <clip>
+          <near>0.01</near>
+          <far>8.0</far>
+        </clip>
+        <noise>
+          <type>gaussian</type>
+          <mean>0</mean>
+          <stddev>0.005</stddev>
+        </noise>
+      </camera>
+    </sensor>
+  </gazebo>
+  
+  <ros2_control name="ArmSystem" type="system">
+    <hardware>
+      <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+    </hardware>
+    
+    <joint name="${prefix}joint1">
+      <command_interface name="position"/>
+      <state_interface name="position">
+        <param name="initial_value">0.879646</param>
+      </state_interface>
+      <state_interface name="velocity"/>
+    </joint>
+
+    <joint name="${prefix}joint2">
+      <command_interface name="position"/>
+      <state_interface name="position">
+        <param name="initial_value">0.0</param>
+      </state_interface>
+      <state_interface name="velocity"/>
+    </joint>
+
+    <joint name="${prefix}joint3">
+      <command_interface name="position"/>
+      <state_interface name="position">
+        <param name="initial_value">0.0</param>
+      </state_interface>
+      <state_interface name="velocity"/>
+    </joint>
+
+    <joint name="${prefix}joint4">
+      <command_interface name="position"/>
+      <state_interface name="position">
+        <param name="initial_value">0.0</param>
+      </state_interface>
+      <state_interface name="velocity"/>
+    </joint>
+
+    <joint name="${prefix}joint5">
+      <command_interface name="position"/>
+      <state_interface name="position">
+        <param name="initial_value">0.0</param>
+      </state_interface>
+      <state_interface name="velocity"/>
+    </joint>
+
+    <joint name="${prefix}joint6">
+      <command_interface name="position"/>
+      <state_interface name="position">
+        <param name="initial_value">0.0</param>
+      </state_interface>
+      <state_interface name="velocity"/>
+    </joint>
+
+    <joint name="${prefix}joint7">
+      <command_interface name="position"/>
+      <state_interface name="position">
+        <param name="initial_value">0.0</param>
+      </state_interface>
+      <state_interface name="velocity"/>
+    </joint>
+
+    <sensor name="tcp_fts_sensor">
+      <state_interface name="force.x"/>
+      <state_interface name="force.y"/>
+      <state_interface name="force.z"/>
+      <state_interface name="torque.x"/>
+      <state_interface name="torque.y"/>
+      <state_interface name="torque.z"/>
+      <param name="frame_id">${prefix}gripper_mount_joint</param>
+    </sensor>
+  </ros2_control>
+
+  <gazebo reference="${prefix}gripper_mount_joint">
+    <preserveFixedJoint>true</preserveFixedJoint>
+    <sensor name="tcp_fts_sensor" type="force_torque">
+      <always_on>true</always_on>
+      <update_rate>50</update_rate>
+      <visualize>true</visualize>
+      <force_torque>
+        <frame>child</frame>
+        <measure_direction>child_to_parent</measure_direction>
+      </force_torque>
+    </sensor>
+  </gazebo>
+  </xacro:macro>
+  
+</robot>
