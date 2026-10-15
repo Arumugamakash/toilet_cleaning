@@ -1,0 +1,88 @@
+Total RGB files found: 304
+Pairs missing depth file (excluded): 0
+Near-duplicate images found (excluded): 15
+   DUPLICATE: dataset_img_0027.png
+   DUPLICATE: dataset_img_0128.png
+   DUPLICATE: dataset_img_0129.png
+   DUPLICATE: dataset_img_0143.png
+   DUPLICATE: dataset_img_0146.png
+   DUPLICATE: dataset_img_0152.png
+   DUPLICATE: dataset_img_0154.png
+   DUPLICATE: dataset_img_0155.png
+   DUPLICATE: dataset_img_0157.png
+   DUPLICATE: dataset_img_0158.png
+   DUPLICATE: dataset_img_0164.png
+   DUPLICATE: dataset_img_0214.png
+   DUPLICATE: dataset_img_0219.png
+   DUPLICATE: dataset_img_0226.png
+   DUPLICATE: dataset_img_0254.png
+Rejected for bad/invalid depth (excluded): 34
+   BAD DEPTH (41.5% invalid): dataset_img_0234.png
+   BAD DEPTH (41.5% invalid): dataset_img_0235.png
+   BAD DEPTH (41.3% invalid): dataset_img_0236.png
+   BAD DEPTH (39.1% invalid): dataset_img_0237.png
+   BAD DEPTH (37.3% invalid): dataset_img_0238.png
+   BAD DEPTH (37.1% invalid): dataset_img_0239.png
+   BAD DEPTH (37.1% invalid): dataset_img_0240.png
+   BAD DEPTH (40.7% invalid): dataset_img_0241.png
+   BAD DEPTH (40.7% invalid): dataset_img_0242.png
+   BAD DEPTH (40.7% invalid): dataset_img_0243.png
+   BAD DEPTH (38.3% invalid): dataset_img_0244.png
+   BAD DEPTH (37.5% invalid): dataset_img_0245.png
+   BAD DEPTH (37.3% invalid): dataset_img_0246.png
+   BAD DEPTH (37.3% invalid): dataset_img_0247.png
+   BAD DEPTH (41.8% invalid): dataset_img_0248.png
+   BAD DEPTH (41.8% invalid): dataset_img_0249.png
+   BAD DEPTH (41.3% invalid): dataset_img_0250.png
+   BAD DEPTH (39.4% invalid): dataset_img_0251.png
+   BAD DEPTH (39.3% invalid): dataset_img_0252.png
+   BAD DEPTH (37.5% invalid): dataset_img_0253.png
+   BAD DEPTH (40.9% invalid): dataset_img_0255.png
+   BAD DEPTH (40.9% invalid): dataset_img_0256.png
+   BAD DEPTH (40.9% invalid): dataset_img_0257.png
+   BAD DEPTH (38.5% invalid): dataset_img_0258.png
+   BAD DEPTH (36.8% invalid): dataset_img_0259.png
+   BAD DEPTH (37.1% invalid): dataset_img_0260.png
+   BAD DEPTH (37.0% invalid): dataset_img_0261.png
+   BAD DEPTH (41.2% invalid): dataset_img_0262.png
+   BAD DEPTH (41.2% invalid): dataset_img_0263.png
+   BAD DEPTH (41.2% invalid): dataset_img_0264.png
+   BAD DEPTH (39.1% invalid): dataset_img_0265.png
+   BAD DEPTH (38.0% invalid): dataset_img_0266.png
+   BAD DEPTH (37.5% invalid): dataset_img_0267.png
+   BAD DEPTH (37.4% invalid): dataset_img_0268.png
+Rejected for blur (excluded): 27
+   BLURRY (score=18.3): dataset_img_0014.png
+   BLURRY (score=21.7): dataset_img_0015.png
+   BLURRY (score=26.7): dataset_img_0016.png
+   BLURRY (score=31.1): dataset_img_0017.png
+   BLURRY (score=32.4): dataset_img_0018.png
+   BLURRY (score=31.4): dataset_img_0019.png
+   BLURRY (score=27.7): dataset_img_0020.png
+   BLURRY (score=12.3): dataset_img_0056.png
+   BLURRY (score=17.6): dataset_img_0057.png
+   BLURRY (score=26.4): dataset_img_0058.png
+   BLURRY (score=29.0): dataset_img_0059.png
+   BLURRY (score=37.5): dataset_img_0060.png
+   BLURRY (score=34.8): dataset_img_0061.png
+   BLURRY (score=38.9): dataset_img_0062.png
+   BLURRY (score=15.0): dataset_img_0088.png
+   BLURRY (score=19.5): dataset_img_0089.png
+   BLURRY (score=22.7): dataset_img_0090.png
+   BLURRY (score=27.9): dataset_img_0091.png
+   BLURRY (score=33.7): dataset_img_0092.png
+   BLURRY (score=33.2): dataset_img_0093.png
+   BLURRY (score=30.1): dataset_img_0094.png
+   BLURRY (score=39.0): dataset_img_0186.png
+   BLURRY (score=38.2): dataset_img_0187.png
+   BLURRY (score=38.6): dataset_img_0188.png
+   BLURRY (score=38.1): dataset_img_0283.png
+   BLURRY (score=35.6): dataset_img_0284.png
+   BLURRY (score=35.2): dataset_img_0285.png
+
+FINAL CLEAN DATASET SIZE: 228 pairs
+
+SPLIT RESULT:
+   Train: 159
+   Val:   45
+   Test:  24

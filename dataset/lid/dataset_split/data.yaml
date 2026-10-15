@@ -1,0 +1,5 @@
+path: /home/arz--1016/arm_basics/my_project/src/dataset/lid/dataset_split
+train: train/images
+val: val/images
+nc: 1
+names: ['lid_1']

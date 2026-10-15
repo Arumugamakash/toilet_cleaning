@@ -17,7 +17,8 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 def generate_launch_description():
     pkg_path = get_package_share_directory("tc_manipulation")
     mesh_file_path = '/home/arz--1016/arm_basics/my_project/src'
-    world_path =os.path.join(pkg_path, 'worlds', 'empty.sdf')
+    world_path =os.path.join(pkg_path, 'worlds', 'toilet_model.sdf')
+    # world_path =os.path.join(pkg_path, 'worlds', 'empty.sdf')
     # 1. Main Robot (TBot + xArm7)
     xacro_file = os.path.join(pkg_path, 'urdf', 'main.urdf.xacro')
     robot_description_content = xacro.process_file(xacro_file).toxml()
@@ -62,7 +63,7 @@ def generate_launch_description():
             "-topic", "robot_description",
             "-name", "toilet_manipulation",
             "-allow_renaming", "true",
-            "-x", "1.5", "-y", "0.0", "-z", "0.3",
+            "-x", "0.9", "-y", "0.0", "-z", "0.3",
             "-Y", "3.14159"
         ],
         parameters=[{"use_sim_time": True}],
@@ -105,7 +106,7 @@ def generate_launch_description():
         executable="static_transform_publisher",
         name="static_tf_odom",
         arguments=[
-            "--x", "1.5",
+            "--x", "0.9",
             "--y", "0.0",
             "--z", "0.035",
             "--yaw", "3.14159",

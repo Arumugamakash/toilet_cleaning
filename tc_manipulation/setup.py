@@ -55,6 +55,8 @@ setup(
             'lid_seat_manipulation = tc_manipulation.lid_seat_manipulation_node:main',
             'seat_manipulation = tc_manipulation.seat_manipulation_node:main',
             'arc_waypoint_node = tc_manipulation.arc_waypoint_node:main',
+            'dataset_collector_node = tc_manipulation.dataset_collector_node:main',
+            'clean_split_dataset = tc_manipulation.clean_and_split_dataset:main',
         ],
     },
 )
