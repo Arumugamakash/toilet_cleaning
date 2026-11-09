@@ -50,15 +50,10 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'lid_opener_node = tc_manipulation.lid_opener_node:main',
             'flush_actuation = tc_manipulation.flush_actuation_node:main',
-            'lid_seat_manipulation = tc_manipulation.lid_seat_manipulation_node:main',
-            'seat_manipulation = tc_manipulation.seat_manipulation_node:main',
             'arc_waypoint_node = tc_manipulation.arc_waypoint_node:main',
             'dataset_collector_node = tc_manipulation.dataset_collector_node:main',
             'clean_split_dataset = tc_manipulation.clean_and_split_dataset:main',
-            'find_lid = tc_manipulation.find_lid:main',
-            'autonomous_dataset_collector = tc_manipulation.autonomous_dataset_collector_node:main',
         ],
     },
 )
