@@ -19,6 +19,10 @@
       </geometry>
       <material name="">
         <color rgba="0.89412 0.89412 0.89412 1.0" />
+        <!-- sandal -->
+        <!-- <color rgba="0.824 0.706 0.549 1"/> -->
+        <!-- green -->
+        <!-- <color rgba="0.298 0.549 0.290 1"/> -->
       </material>
     </visual>
     <collision>
@@ -29,8 +33,7 @@
     </collision>
   </link>
 
-  <link
-    name="toilet">
+  <link name="toilet">
     <inertial>
       <origin
         xyz="-0.081462 -1.4865E-07 0.4501"
@@ -53,10 +56,19 @@
         <mesh
           filename="package://tc_manipulation/meshes/toilet/wsingle4_toilet.STL" />
       </geometry>
-      <material
-        name="">
-        <color
-          rgba="0.89412 0.89412 0.89412 1" />
+      <material name="">
+        <color rgba="0.89412 0.89412 0.89412 1" />
+        <!-- Light blue -->
+        <!-- <color rgba="0.20 0.55 0.85 1"/> -->
+
+        <!-- Dark blue -->
+        <!-- <color rgba="0.05 0.30 0.65 1"/> -->
+
+        <!-- Dark brown -->
+        <!-- <color rgba="0.20 0.08 0.03 1"/> -->
+
+        <!-- Ash -->
+        <!-- <color rgba="0.45 0.45 0.45 1"/> -->
       </material>
     </visual>
     <collision>
@@ -99,10 +111,18 @@
         <mesh
           filename="package://tc_manipulation/meshes/toilet/wsingle4_seat.STL" />
       </geometry>
-      <material
-        name="">
-        <color
-          rgba="0.89412 0.89412 0.89412 1" />
+      <material name="">
+        <color rgba="0.89412 0.89412 0.89412 1" />
+        <!-- Light blue -->
+        <!-- <color rgba="0.20 0.55 0.85 1"/> -->
+        <!-- Dark blue -->
+        <!-- <color rgba="0.05 0.30 0.65 1"/> -->
+
+        <!-- Dark brown -->
+        <!-- <color rgba="0.20 0.08 0.03 1"/> -->
+
+        <!-- Ash -->
+        <!-- <color rgba="0.45 0.45 0.45 1"/> -->
       </material>
     </visual>
     <collision>
@@ -157,10 +177,18 @@
         <mesh
           filename="package://tc_manipulation/meshes/toilet/wsingle4_lid.STL" />
       </geometry>
-      <material
-        name="">
-        <color
-          rgba="0.89412 0.89412 0.89412 1" />
+      <material name="">
+        <color rgba="0.89412 0.89412 0.89412 1" />
+        <!-- Light blue -->
+        <!-- <color rgba="0.20 0.55 0.85 1"/> -->
+        <!-- Dark blue -->
+        <!-- <color rgba="0.05 0.30 0.65 1"/> -->
+
+        <!-- Dark brown -->
+        <!-- <color rgba="0.20 0.08 0.03 1"/> -->
+
+        <!-- Ash -->
+        <!-- <color rgba="0.45 0.45 0.45 1"/> -->
       </material>
     </visual>
     <collision>

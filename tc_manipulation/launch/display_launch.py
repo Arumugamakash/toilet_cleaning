@@ -63,7 +63,7 @@ def generate_launch_description():
             "-topic", "robot_description",
             "-name", "toilet_manipulation",
             "-allow_renaming", "true",
-            "-x", "0.9", "-y", "0.0", "-z", "0.3",
+            "-x", "2.3", "-y", "0.0", "-z", "0.3",
             "-Y", "3.14159"
         ],
         parameters=[{"use_sim_time": True}],
@@ -106,7 +106,7 @@ def generate_launch_description():
         executable="static_transform_publisher",
         name="static_tf_odom",
         arguments=[
-            "--x", "0.9",
+            "--x", "2.3",
             "--y", "0.0",
             "--z", "0.035",
             "--yaw", "3.14159",
@@ -179,6 +179,17 @@ def generate_launch_description():
         output="screen",
     )
 
+    # diff_drive_spawner = Node(
+    #     package="controller_manager",
+    #     executable="spawner",
+    #     arguments=[
+    #         "diff_drive_controller",
+    #         "-c", "/mobile_robot/controller_manager",
+    #     ],
+    #     parameters=[{"use_sim_time": True}],
+    #     output="screen",
+    # )
+
     ft_broadcaster_spawner = Node(
         package="controller_manager",
         executable="spawner",
@@ -212,7 +223,7 @@ def generate_launch_description():
         output="screen",
     )
 
-    # Event handlers / Delay sequences
+
     delay_jsb_after_spawn = RegisterEventHandler(
         event_handler=OnProcessExit(
             target_action=spawn_robot_node,
@@ -227,7 +238,14 @@ def generate_launch_description():
         )
     )
 
-    delay_moveit_after_arm_controller = RegisterEventHandler(
+    # delay_diff_drive_after_jsb = RegisterEventHandler(
+    #     event_handler=OnProcessExit(
+    #         target_action=joint_state_broadcaster_spawner,
+    #         on_exit=[diff_drive_spawner],
+    #     )
+    # )
+
+    delay_moveit_after_diff_drive_controller = RegisterEventHandler(
         event_handler=OnProcessExit(
             target_action=arm_controller_spawner,
             on_exit=[move_group_launch, moveit_rviz_launch],
@@ -265,8 +283,8 @@ def generate_launch_description():
     # Event handlers
     launchDescriptionObject.add_action(delay_jsb_after_spawn)
     launchDescriptionObject.add_action(delay_arm_controller_after_jsb)
+    # launchDescriptionObject.add_action(delay_diff_drive_after_jsb)
+    launchDescriptionObject.add_action(delay_moveit_after_diff_drive_controller)    
     launchDescriptionObject.add_action(delay_toilet_jsb_after_spawn_toilet)
     launchDescriptionObject.add_action(delay_toilet_controller_after_toilet_jsb)
-    launchDescriptionObject.add_action(delay_moveit_after_arm_controller)
-    
     return launchDescriptionObject

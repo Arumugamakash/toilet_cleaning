@@ -57,6 +57,8 @@ setup(
             'arc_waypoint_node = tc_manipulation.arc_waypoint_node:main',
             'dataset_collector_node = tc_manipulation.dataset_collector_node:main',
             'clean_split_dataset = tc_manipulation.clean_and_split_dataset:main',
+            'find_lid = tc_manipulation.find_lid:main',
+            'autonomous_dataset_collector = tc_manipulation.autonomous_dataset_collector_node:main',
         ],
     },
 )

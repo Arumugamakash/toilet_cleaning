@@ -34,8 +34,8 @@ class DatasetCollector(Node):
 
         # ---- Save Directories (RGB and Depth kept separate, same base folder) ----
         self.base_dir = '/home/arz--1016/arm_basics/my_project/src/dataset/lid'
-        self.rgb_dir = os.path.join(self.base_dir, 'rgb')
-        self.depth_dir = os.path.join(self.base_dir, 'depth')
+        self.rgb_dir = os.path.join(self.base_dir, 'rgb_img')
+        self.depth_dir = os.path.join(self.base_dir, 'depth_img')
         os.makedirs(self.rgb_dir, exist_ok=True)
         os.makedirs(self.depth_dir, exist_ok=True)
 

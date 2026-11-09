@@ -358,20 +358,6 @@
     </collision>
   </link>
 
-  <!-- <joint name="${prefix}camera_joint" type="fixed">
-    <parent link="${prefix}link6"/>
-    <child link="${prefix}camera_link"/>
-    <origin xyz="0.13 0.0 0.0" rpy="0 0 1.5708"/>
-  </joint>
-
-  <link name="${prefix}camera_optical_link"/>
-
-  <joint name="${prefix}camera_optical_joint" type="fixed">
-    <parent link="${prefix}camera_link"/>
-    <child link="${prefix}camera_optical_link"/>
-    <origin xyz="0 0 0" rpy="-1.5708 0 -1.5708"/>
-  </joint> -->
-
    <joint name="${prefix}camera_joint" type="fixed">
     <parent link="${prefix}link6"/>
     <child link="${prefix}camera_link"/>
@@ -396,13 +382,13 @@
       <camera name="rgbd">
         <horizontal_fov>0.7</horizontal_fov>
         <image> 
-          <width>320</width>
-          <height>240</height>
+          <width>640</width>
+          <height>480</height>
           <format>R8G8B8</format>
         </image>
         <clip>
           <near>0.01</near>
-          <far>8.0</far>
+          <far>10.0</far>
         </clip>
         <noise>
           <type>gaussian</type>
@@ -489,7 +475,7 @@
     <preserveFixedJoint>true</preserveFixedJoint>
     <sensor name="tcp_fts_sensor" type="force_torque">
       <always_on>true</always_on>
-      <up date_rate>50</update_rate>
+      <update_rate>50</update_rate>
       <visualize>true</visualize>
       <force_torque>
         <frame>child</frame>

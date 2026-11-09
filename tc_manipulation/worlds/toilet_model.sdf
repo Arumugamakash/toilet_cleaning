@@ -197,12 +197,11 @@
     <!-- DUSTBIN (Realistic, two-tone: black base + green body + black rim) -->
     <!-- Built from stacked cylinders since SDF has no cone/frustum primitive -->
     <!-- ================================================================ -->
-    <model name='dustbin'>
+    <!-- <model name='dustbin'>
       <static>true</static>
       <pose>-0.52 0.4 0.175 0 0 0</pose>
       <link name='dustbin_link'>
 
-      <!-- Lower section: dark base (common in real dustbins) -->
       <visual name='dustbin_base_visual'>
         <pose>0 0 -0.115 0 0 0</pose>
         <geometry>
@@ -227,7 +226,6 @@
         </geometry>
       </collision>
 
-      <!-- Upper section: coloured body (green plastic look) -->
       <visual name='dustbin_body_visual'>
         <pose>0 0 0.06 0 0 0</pose>
         <geometry>
@@ -252,7 +250,6 @@
         </geometry>
       </collision>
 
-      <!-- Top rim: dark edge lip -->
       <visual name='dustbin_rim_visual'>
         <pose>0 0 0.185 0 0 0</pose>
         <geometry>
@@ -278,7 +275,7 @@
       </collision>
 
       </link>
-    </model>
+    </model> -->
 
     <!-- ================================================================ -->
     <!-- TOILET BRUSH (Realistic: white holder cup + blue handle + head)   -->
@@ -288,7 +285,6 @@
       <pose>-0.5 -0.35 0 0 0 0</pose>
       <link name='brush_link'>
 
-      <!-- Holder cup (base the brush stands in) -->
       <visual name='holder_visual'>
         <pose>0 0 0.05 0 0 0</pose>
         <geometry>
@@ -313,7 +309,6 @@
         </geometry>
       </collision>
 
-      <!-- Brush head (bristles) - cream/white -->
       <visual name='brush_head_visual'>
         <pose>0 0 0.14 0 0 0</pose>
         <geometry>
@@ -336,7 +331,6 @@
         </geometry>
       </collision>
 
-      <!-- Handle - coloured plastic (blue) -->
       <visual name='brush_handle_visual'>
         <pose>0 0 0.33 0 0 0</pose>
         <geometry>
