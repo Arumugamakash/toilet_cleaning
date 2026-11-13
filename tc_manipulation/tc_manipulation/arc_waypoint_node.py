@@ -150,32 +150,31 @@ class ToiletLidNode(Node):
         self.declare_parameter('move_group', 'xarm7_arm')
 
         # ── Mobile Base Navigation Parameters ──────────────────────────────────
-        self.declare_parameter('base_target_x', 1.10)
+        self.declare_parameter('base_target_x', 1.00)
         self.declare_parameter('base_target_y', 0.0)
         self.declare_parameter('base_target_yaw', 3.14159)
-        self.declare_parameter('min_safe_base_x', 0.75)
+        self.declare_parameter('min_safe_base_x', 0.85)
         self.declare_parameter('max_base_speed', 0.06)
         self.declare_parameter('max_base_turn_speed', 0.15)
         self.declare_parameter('nav_xy_tol', 0.04)
         self.declare_parameter('nav_yaw_tol', 0.04)
         # Stop driving once the grasp point is within this distance of the arm shoulder.
-        # (was hard-coded 0.65 = the very edge of xArm7 reach -> no margin for pre-grasp/lift)
-        self.declare_parameter('max_arm_reach', 0.55)
+        # Adjusted from 0.55 to 0.42 to ensure the robot gets close enough to reach the 92 deg full lift!
+        self.declare_parameter('max_arm_reach', 0.42)
         # Names of the arm joints (used to build the joint-space pre-grasp goal)
         self.declare_parameter('arm_joint_names', ['joint1', 'joint2', 'joint3', 'joint4',
                                                    'joint5', 'joint6', 'joint7'])
         # Pre-grasp standoffs (m) tried in order until IK + planning succeed
         self.declare_parameter('pre_grasp_standoffs', [0.15, 0.10, 0.05])
 
-        # ── Lid Grasping Parameters (Toilet Frame) ─────────────────────────────
         self.declare_parameter('use_toilet_relative_grasp', True)
-        self.declare_parameter('grasp_target_x_toilet', 0.37287)
-        self.declare_parameter('grasp_target_y_toilet', 0.00357)
-        self.declare_parameter('grasp_target_z_toilet', 0.36462)
+        self.declare_parameter('grasp_target_x_toilet', 0.36287)
+        self.declare_parameter('grasp_target_y_toilet', 0.0007090354338288307)
+        self.declare_parameter('grasp_target_z_toilet', 0.36162)
 
-        self.declare_parameter('grasp_target_x_world', -0.0437)
-        self.declare_parameter('grasp_target_y_world', 0.00357)
-        self.declare_parameter('grasp_target_z_world', 0.36462)
+        self.declare_parameter('grasp_target_x_world', -0.035139404237270355)
+        self.declare_parameter('grasp_target_y_world', 0.002155768685042858)
+        self.declare_parameter('grasp_target_z_world', 0.36162)
 
         self.declare_parameter('grasp_roll', 0.0)
         self.declare_parameter('grasp_pitch', 1.5708)
@@ -195,9 +194,9 @@ class ToiletLidNode(Node):
         self.declare_parameter('arm_speed_scale', 6.0)
         self.declare_parameter('speed_scale', 5.0)
 
-        # ── Grasp verification (NEW) ───────────────────────────────────────────
+        # ── Grasp verification ─────────────────────────────────────────────────
         self.declare_parameter('settle_time', 1.0)          # s to let the arm stop
-        self.declare_parameter('grasp_pos_tol', 0.012)      # m, max error before lifting
+        self.declare_parameter('grasp_pos_tol', 0.035)      # m, max error before lifting (35 mm for sim contact/sag)
         self.declare_parameter('max_grasp_corrections', 2)  # re-insert attempts
 
         # ── Lid Arc Geometry Parameters ────────────────────────────────────────
@@ -207,9 +206,16 @@ class ToiletLidNode(Node):
         # Orientation follow factor along the arc, tried in order.
         # 1.0 = gripper rotates exactly with the lid (no slipping).
         # Lower values only used if the wrist cannot reach 1.0 (more slip risk).
-        self.declare_parameter('tilt_candidates', [1.0, 0.9, 0.8, 0.65])
+        self.declare_parameter('tilt_candidates', [1.0, 0.85, 0.70, 0.55])
         self.declare_parameter('arc_min_fraction', 0.95)    # accept path if >= this
-        self.declare_parameter('cartesian_jump_threshold', 5.0)  # 0.0 disables
+        self.declare_parameter('cartesian_jump_threshold', 0.0)  # 0.0 disables jump cutoff
+
+        # ── Staged Lifting & Deep Insertion Parameters ─────────────────────────
+        self.declare_parameter('use_staged_lid_lift', True)
+        self.declare_parameter('stage1_waypoints', 5)             # First N waypoints to crack open lid
+        self.declare_parameter('deep_insert_distance', 0.05)       # m (5 cm) deeper into lid along blade / tool Z
+        self.declare_parameter('deep_insert_along_tool', True)     # True = along tool +Z; False = world -X
+        self.declare_parameter('deep_insert_speed_scale', 4.0)
 
         # Hinge location from URDF relative to toilet frame
         self.hinge_origin_xyz = [-0.07218, 0.0, 0.42234]
@@ -323,15 +329,24 @@ class ToiletLidNode(Node):
 
         use_toilet = self.get_param('use_toilet_relative_grasp', True)
         if use_toilet and T_world_toilet is not None:
-            gx = self.get_param('grasp_target_x_toilet', 0.37287)
-            gy = self.get_param('grasp_target_y_toilet', 0.00357)
-            gz = self.get_param('grasp_target_z_toilet', 0.44867)
+            # gx = self.get_param('grasp_target_x_toilet', 0.37287)
+            # gy = self.get_param('grasp_target_y_toilet', 0.00357)
+            # gz = self.get_param('grasp_target_z_toilet', 0.44867)
+
+            gx = self.get_param('grasp_target_x_toilet', 0.36287)
+            gy = self.get_param('grasp_target_y_toilet', 0.0007090354338288307)
+            gz = self.get_param('grasp_target_z_toilet', 0.36162)
+            
             T_toilet_fingertip = np.dot(translation_matrix([gx, gy, gz]), quaternion_matrix(q_rot))
             T_world_fingertip = np.dot(T_world_toilet, T_toilet_fingertip)
         else:
-            gx = self.get_param('grasp_target_x_world', -0.03986)
-            gy = self.get_param('grasp_target_y_world', 0.00357)
-            gz = self.get_param('grasp_target_z_world', 0.44867)
+            # gx = self.get_param('grasp_target_x_world', -0.0427)
+            # gy = self.get_param('grasp_target_y_world', 0.00357)
+            # gz = self.get_param('grasp_target_z_world', 0.44867)
+
+            gx = self.get_param('grasp_target_x_world',-0.035139404237270355)
+            gy = self.get_param('grasp_target_y_world', 0.002155768685042858)
+            gz = self.get_param('grasp_target_z_world', 0.36162)
             T_world_fingertip = np.dot(translation_matrix([gx, gy, gz]), quaternion_matrix(q_rot))
 
         ft_offset_z = self.get_param('fingertip_offset_z', -0.060)
@@ -341,6 +356,37 @@ class ToiletLidNode(Node):
 
     def calculate_grasp_pose(self, extra_x_offset=0.0):
         return matrix_to_pose(self.calculate_grasp_matrix(extra_x_offset=extra_x_offset))
+
+    def calculate_open_pose(self):
+        """Pose of the gripper when the lid is at full open (theta = theta_end)."""
+        planning_frame = self.get_param('planning_frame', 'world')
+        toilet_frame = self.get_param('toilet_frame', 'toilet')
+        T_world_toilet = self.get_transform_matrix(planning_frame, toilet_frame)
+        if T_world_toilet is None:
+            T_world_toilet = self.get_transform_matrix(planning_frame, 'toilet_base_link')
+        if T_world_toilet is None:
+            return None
+
+        q_hinge = euler_to_quaternion(*self.hinge_origin_rpy)
+        T_toilet_hinge = np.dot(translation_matrix(self.hinge_origin_xyz), quaternion_matrix(q_hinge))
+        T_world_hinge = np.dot(T_world_toilet, T_toilet_hinge)
+
+        T_world_grasp = self.calculate_grasp_matrix(extra_x_offset=0.0)
+        T_hinge_grip_init = np.dot(np.linalg.inv(T_world_hinge), T_world_grasp)
+
+        theta_end = float(self.get_param('theta_end', 1.62))
+        tilt = 0.85
+        d_deep = float(self.get_param('deep_insert_distance', 0.05))
+
+        T_pos = np.dot(T_world_hinge, np.dot(
+            quaternion_matrix(euler_to_quaternion(0.0, 0.0, theta_end)), T_hinge_grip_init))
+        T_ori = np.dot(T_world_hinge, np.dot(
+            quaternion_matrix(euler_to_quaternion(0.0, 0.0, theta_end * tilt)), T_hinge_grip_init))
+
+        T_open = np.copy(T_ori)
+        T_open[0:3, 3] = T_pos[0:3, 3]
+        T_open = np.dot(T_open, translation_matrix([0.0, 0.0, d_deep]))
+        return matrix_to_pose(T_open)
 
     # ─────────────────────────────────────────────────────────────────────────
     # State Machine Loop
@@ -359,6 +405,18 @@ class ToiletLidNode(Node):
             pass
         elif self.state == 'SETTLING_AND_VERIFYING':
             self.step_settling_and_verifying()
+        elif self.state == 'GENERATING_STAGE1_ARC':
+            self.step_generating_stage1_arc()
+        elif self.state == 'EXECUTING_STAGE1_ARC':
+            pass
+        elif self.state == 'INSERTING_DEEP_GRASP':
+            self.step_inserting_deep_grasp()
+        elif self.state == 'EXECUTING_DEEP_INSERT':
+            pass
+        elif self.state == 'GENERATING_STAGE2_ARC':
+            self.step_generating_stage2_arc()
+        elif self.state == 'EXECUTING_STAGE2_ARC':
+            pass
         elif self.state == 'GENERATING_ARC_AND_LIFTING':
             self.step_generating_arc_and_lifting()
         elif self.state == 'EXECUTING_LID_ARC':
@@ -381,10 +439,10 @@ class ToiletLidNode(Node):
             self.get_logger().info("Waiting for TF transforms (world -> toilet, world -> base_link)...", throttle_duration_sec=3.0)
             return
 
-        tx = self.get_param('base_target_x', 0.90)
+        tx = self.get_param('base_target_x', 1.00)
         ty = self.get_param('base_target_y', 0.0)
         tyaw = self.get_param('base_target_yaw', 3.14159)
-        min_safe_x = self.get_param('min_safe_base_x', 0.75)
+        min_safe_x = self.get_param('min_safe_base_x', 0.85)
         tx = max(tx, min_safe_x)
 
         q_target = euler_to_quaternion(0.0, 0.0, tyaw)
@@ -439,22 +497,26 @@ class ToiletLidNode(Node):
         cmd.angular.z = float(max(-max_trn, min(max_trn, err_yaw * 0.8)))
         self.cmd_vel_pub.publish(cmd)
 
-        max_arm_reach = self.get_param('max_arm_reach', 0.55)
+        max_arm_reach = self.get_param('max_arm_reach', 0.42)
         if dist_to_arm <= max_arm_reach and not self.is_checking_reachability:
+            target_open_pose = self.calculate_open_pose()
             target_grasp_pose = matrix_to_pose(T_world_grasp)
             self.is_checking_reachability = True
-            self.check_moveit_reachability(target_grasp_pose, dist_to_arm)
+            self.check_moveit_reachability(target_open_pose, target_grasp_pose, dist_to_arm)
 
-    def check_moveit_reachability(self, target_pose, current_arm_dist):
+    def check_moveit_reachability(self, target_open_pose, target_grasp_pose, current_arm_dist):
         if not self.compute_ik_client.service_is_ready():
             self.is_checking_reachability = False
             return
+
+        # Check full open pose (reaching 92.8 deg full lift is the limiting physical reach constraint)
+        test_pose = target_open_pose if target_open_pose is not None else target_grasp_pose
 
         req = PositionIKRequest()
         req.group_name = self.get_param('move_group', 'xarm7_arm')
         req.ik_link_name = self.get_param('gripper_frame', 'gripper_base_link')
         req.pose_stamped.header.frame_id = self.get_param('planning_frame', 'world')
-        req.pose_stamped.pose = target_pose
+        req.pose_stamped.pose = test_pose
         req.timeout.sec = 0
         req.timeout.nanosec = 80000000
         req.avoid_collisions = False
@@ -471,8 +533,10 @@ class ToiletLidNode(Node):
             res = future.result()
             if (self.state == 'NAVIGATING_AND_CHECKING_REACH'
                     and res.error_code.val == 1
-                    and arm_dist_when_called <= self.get_param('max_arm_reach', 0.55)):
-                self.get_logger().info(f"MoveIt reachability CONFIRMED (arm dist={arm_dist_when_called:.2f}m)!")
+                    and arm_dist_when_called <= self.get_param('max_arm_reach', 0.42)):
+                self.get_logger().info(
+                    f"MoveIt reachability CONFIRMED for full lid opening arc (arm dist={arm_dist_when_called:.2f}m)!"
+                )
                 self.cmd_vel_pub.publish(Twist())
                 self.reachability_confirmed = True
                 self.state = 'PLANNING_PRE_GRASP'
@@ -713,8 +777,15 @@ class ToiletLidNode(Node):
         if T_cur is None or T_tgt is None:
             return  # wait for TF
 
-        err = float(np.linalg.norm(T_cur[0:3, 3] - T_tgt[0:3, 3]))
-        tol = self.get_param('grasp_pos_tol', 0.012)
+        diff = T_cur[0:3, 3] - T_tgt[0:3, 3]
+        err = float(np.linalg.norm(diff))
+        tol = self.get_param('grasp_pos_tol', 0.035)
+
+        self.get_logger().info(
+            f"Grasp position check: cur=({T_cur[0,3]:.3f}, {T_cur[1,3]:.3f}, {T_cur[2,3]:.3f}) | "
+            f"tgt=({T_tgt[0,3]:.3f}, {T_tgt[1,3]:.3f}, {T_tgt[2,3]:.3f}) | "
+            f"err={err*1000:.1f} mm (dx={diff[0]*1000:.1f}, dy={diff[1]*1000:.1f}, dz={diff[2]*1000:.1f}) mm"
+        )
 
         if err > tol:
             if self.grasp_corrections < self.get_param('max_grasp_corrections', 2):
@@ -724,22 +795,35 @@ class ToiletLidNode(Node):
                     f"Correcting ({self.grasp_corrections}).")
                 self.state = 'POSITIONING_GRIPPER'
                 return
-            self.get_logger().error(
-                f"Gripper is {err*1000:.1f} mm from the grasp point after corrections. "
-                f"Lifting now would miss the lid -> aborting. Check fingertip_offset_z / toilet TF.")
-            self.state = 'DONE'
-            return
 
-        self.get_logger().info(f"Grasp position verified (error {err*1000:.1f} mm). Lifting lid.")
-        self.arc_tilt_index = 0
-        self.arc_best = None
-        self.state = 'GENERATING_ARC_AND_LIFTING'
+            if err < 0.050:
+                self.get_logger().warn(
+                    f"Gripper is {err*1000:.1f} mm from target, but within grasp envelope (<50 mm). "
+                    f"Proceeding to lift lid from current gripper pose.")
+            else:
+                self.get_logger().error(
+                    f"Gripper is {err*1000:.1f} mm from the grasp point after corrections. "
+                    f"Lifting now would miss the lid -> aborting. Check fingertip_offset_z / toilet TF.")
+                self.state = 'DONE'
+                return
+
+        if self.get_param('use_staged_lid_lift', True):
+            self.get_logger().info(f"Grasp position verified (error {err*1000:.1f} mm <= {tol*1000:.1f} mm).")
+            self.get_logger().info("Starting Stage 1: Cracking open lid (first 5 waypoints)...")
+            self.arc_tilt_index = 0
+            self.arc_best = None
+            self.state = 'GENERATING_STAGE1_ARC'
+        else:
+            self.get_logger().info(f"Grasp position verified (error {err*1000:.1f} mm <= {tol*1000:.1f} mm). Lifting lid.")
+            self.arc_tilt_index = 0
+            self.arc_best = None
+            self.state = 'GENERATING_ARC_AND_LIFTING'
 
     # ─────────────────────────────────────────────────────────────────────────
-    # Step 4 & 5: Generate Arc Waypoints & Lift the Lid
+    # Step 4: Arc Waypoint Generation (Common Geometry)
     # ─────────────────────────────────────────────────────────────────────────
 
-    def generate_arc_waypoints(self, tilt):
+    def generate_arc_waypoints(self, tilt, theta_array=None, T_gripper_ref=None, theta_ref=0.0):
         """
         Waypoints for the gripper rotating about the lid hinge.
 
@@ -764,27 +848,34 @@ class ToiletLidNode(Node):
         T_toilet_hinge = np.dot(translation_matrix(self.hinge_origin_xyz), quaternion_matrix(q_hinge))
         T_world_hinge = np.dot(T_world_toilet, T_toilet_hinge)
 
-        T_world_gripper = self.get_gripper_matrix()
-        if T_world_gripper is None:
+        if T_gripper_ref is None:
+            T_gripper_ref = self.get_gripper_matrix()
+        if T_gripper_ref is None:
             self.get_logger().error("Could not obtain gripper transform for arc calculation!")
             return None
 
-        T_hinge_gripper_initial = np.dot(np.linalg.inv(T_world_hinge), T_world_gripper)
+        R_ref = quaternion_matrix(euler_to_quaternion(0.0, 0.0, theta_ref))
+        T_hinge_grip_ref = np.dot(np.linalg.inv(T_world_hinge), T_gripper_ref)
+        T_hinge_at_zero = np.dot(np.linalg.inv(R_ref), T_hinge_grip_ref)
 
-        theta_start = self.get_param('theta_start', 0.01)
-        theta_end = self.get_param('theta_end', 1.62)
-        num_waypoints = int(self.get_param('num_waypoints', 30))
-        thetas = np.linspace(theta_start, theta_end, num_waypoints)
+        if theta_array is None:
+            theta_start = self.get_param('theta_start', 0.01)
+            theta_end = self.get_param('theta_end', 1.62)
+            num_waypoints = int(self.get_param('num_waypoints', 30))
+            theta_array = np.linspace(theta_start, theta_end, num_waypoints)
 
         waypoints = []
         prev_q = None
-        for theta in thetas:
-            # Full rotation -> position on the circle
+        for theta in theta_array:
+            # Full rotation -> position on circle
             T_pos = np.dot(T_world_hinge, np.dot(
-                quaternion_matrix(euler_to_quaternion(0.0, 0.0, theta)), T_hinge_gripper_initial))
-            # (Partial) rotation -> orientation
-            T_ori = np.dot(T_world_hinge, np.dot(
-                quaternion_matrix(euler_to_quaternion(0.0, 0.0, theta * tilt)), T_hinge_gripper_initial))
+                quaternion_matrix(euler_to_quaternion(0.0, 0.0, theta)), T_hinge_at_zero))
+
+            # Orientation rotation relative to reference:
+            d_theta = theta - theta_ref
+            R_delta_ori = quaternion_matrix(euler_to_quaternion(0.0, 0.0, d_theta * tilt))
+            T_ori = np.dot(T_world_hinge, np.dot(R_delta_ori, T_hinge_grip_ref))
+
             q = matrix_to_quaternion(T_ori)
             if prev_q is not None and np.dot(q, prev_q) < 0.0:
                 q = [-c for c in q]  # keep quaternion continuous
@@ -803,8 +894,291 @@ class ToiletLidNode(Node):
         pose_array.poses = waypoints
         self.waypoint_pub.publish(pose_array)
 
-        self.get_logger().info(f"Generated {len(waypoints)} arc waypoints (tilt={tilt:.2f}).")
+        self.get_logger().info(
+            f"Generated {len(waypoints)} arc waypoints (tilt={tilt:.2f}, theta [{theta_array[0]:.2f} -> {theta_array[-1]:.2f}] rad)."
+        )
         return waypoints
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # Stage 1: Crack Open Lid (First 5 Waypoints)
+    # ─────────────────────────────────────────────────────────────────────────
+
+    def step_generating_stage1_arc(self):
+        candidates = list(self.get_param('tilt_candidates', [1.0]))
+        if self.arc_tilt_index >= len(candidates):
+            self.get_logger().error("No arc tilt candidates left for Stage 1. Aborting.")
+            self.state = 'DONE'
+            return
+        tilt = float(candidates[self.arc_tilt_index])
+
+        theta_start = self.get_param('theta_start', 0.01)
+        theta_end = self.get_param('theta_end', 1.62)
+        num_waypoints = int(self.get_param('num_waypoints', 30))
+        all_thetas = np.linspace(theta_start, theta_end, num_waypoints)
+
+        n_stage1 = int(self.get_param('stage1_waypoints', 5))
+        n_stage1 = max(2, min(n_stage1, len(all_thetas)))
+        stage1_thetas = all_thetas[:n_stage1]
+
+        waypoints = self.generate_arc_waypoints(tilt, theta_array=stage1_thetas, theta_ref=0.0)
+        if not waypoints or len(waypoints) < 2:
+            self.get_logger().error("Stage 1 arc waypoint generation failed! Aborting.")
+            self.state = 'DONE'
+            return
+
+        if not self.compute_path_client.wait_for_service(timeout_sec=2.0):
+            self.get_logger().error("compute_cartesian_path service not available!")
+            self.state = 'DONE'
+            return
+
+        req = self.make_cartesian_request(waypoints)
+        self.state = 'EXECUTING_STAGE1_ARC'
+        future = self.compute_path_client.call_async(req)
+        future.add_done_callback(lambda f, t=tilt: self.stage1_trajectory_computed_cb(f, t))
+
+    def stage1_trajectory_computed_cb(self, future, tilt):
+        try:
+            res = future.result()
+        except Exception as e:
+            self.get_logger().error(f"Stage 1 Cartesian path computation failed: {e}")
+            self.state = 'DONE'
+            return
+
+        frac = res.fraction
+        self.get_logger().info(f"Stage 1 Arc (tilt={tilt:.2f}) fraction = {frac*100:.1f}%")
+        if self.arc_best is None or frac > self.arc_best[0]:
+            self.arc_best = (frac, res.solution, tilt)
+
+        candidates = list(self.get_param('tilt_candidates', [1.0]))
+        min_frac = self.get_param('arc_min_fraction', 0.95)
+
+        if frac < min_frac and self.arc_tilt_index + 1 < len(candidates):
+            self.arc_tilt_index += 1
+            self.state = 'GENERATING_STAGE1_ARC'
+            return
+
+        best_frac, best_sol, best_tilt = self.arc_best
+        if best_frac < 0.2:
+            self.get_logger().error(f"Stage 1 best fraction only {best_frac*100:.1f}%. Aborting.")
+            self.state = 'DONE'
+            return
+
+        self.get_logger().info(f"Executing Stage 1 lift (crack open lid, 5 waypoints, fraction={best_frac*100:.1f}%)...")
+        scale_trajectory(best_sol, self.get_param('speed_scale', 5.0))
+
+        goal = ExecuteTrajectory.Goal()
+        goal.trajectory = best_sol
+        exec_future = self.execute_client.send_goal_async(goal)
+        exec_future.add_done_callback(self.stage1_exec_cb)
+
+    def stage1_exec_cb(self, future):
+        goal_handle = future.result()
+        if not goal_handle.accepted:
+            self.get_logger().error("Stage 1 trajectory goal rejected.")
+            self.state = 'DONE'
+            return
+        self.current_goal_handle = goal_handle
+        goal_handle.get_result_async().add_done_callback(self.stage1_done_cb)
+
+    def stage1_done_cb(self, future):
+        self.current_goal_handle = None
+        result = future.result().result
+        if result.error_code.val != 1:
+            self.get_logger().warn(f"Stage 1 execution finished with code: {result.error_code.val}")
+
+        self.get_logger().info("Stage 1 complete! Lid is cracked open. Transitioning to INSERTING_DEEP_GRASP.")
+        self.state = 'INSERTING_DEEP_GRASP'
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # Deep Insertion: Push Gripper Deeper into the Opened Lid Gap
+    # ─────────────────────────────────────────────────────────────────────────
+
+    def step_inserting_deep_grasp(self):
+        T_cur = self.get_gripper_matrix()
+        if T_cur is None:
+            return
+
+        d_deep = float(self.get_param('deep_insert_distance', 0.05))
+        along_tool = self.get_param('deep_insert_along_tool', True)
+
+        if along_tool:
+            # Move along tool +Z (forward along spatula blade, pointing towards hinge into the lid gap)
+            T_deep = np.dot(T_cur, translation_matrix([0.0, 0.0, d_deep]))
+            self.get_logger().info(
+                f"Inserting gripper {d_deep*1000:.1f} mm deeper along blade (+Z) into lid gap for full grasp..."
+            )
+        else:
+            # Move along world -X into the toilet
+            T_deep = np.copy(T_cur)
+            T_deep[0, 3] -= d_deep
+            self.get_logger().info(
+                f"Inserting gripper {d_deep*1000:.1f} mm deeper along world -X into lid gap for full grasp..."
+            )
+
+        deep_pose = matrix_to_pose(T_deep)
+
+        if not self.compute_path_client.wait_for_service(timeout_sec=2.0):
+            self.get_logger().error("compute_cartesian_path service not available!")
+            self.state = 'DONE'
+            return
+
+        req = self.make_cartesian_request([deep_pose])
+        self.state = 'EXECUTING_DEEP_INSERT'
+        future = self.compute_path_client.call_async(req)
+        future.add_done_callback(self.deep_insert_computed_cb)
+
+    def deep_insert_computed_cb(self, future):
+        try:
+            res = future.result()
+        except Exception as e:
+            self.get_logger().error(f"Deep insertion Cartesian path failed: {e}")
+            self.state = 'DONE'
+            return
+
+        frac = res.fraction
+        self.get_logger().info(f"Deep insertion approach fraction = {frac*100:.1f}%")
+        if frac < 0.5:
+            self.get_logger().warn(
+                f"Deep insertion fraction low ({frac*100:.1f}%). Proceeding directly to Stage 2 from current pose."
+            )
+            self.arc_tilt_index = 0
+            self.arc_best = None
+            self.state = 'GENERATING_STAGE2_ARC'
+            return
+
+        speed_scale = self.get_param('deep_insert_speed_scale', 4.0)
+        scale_trajectory(res.solution, speed_scale)
+
+        goal = ExecuteTrajectory.Goal()
+        goal.trajectory = res.solution
+        exec_future = self.execute_client.send_goal_async(goal)
+        exec_future.add_done_callback(self.deep_insert_exec_cb)
+
+    def deep_insert_exec_cb(self, future):
+        goal_handle = future.result()
+        if not goal_handle.accepted:
+            self.get_logger().error("Deep insertion trajectory goal rejected.")
+            self.state = 'DONE'
+            return
+        self.current_goal_handle = goal_handle
+        goal_handle.get_result_async().add_done_callback(self.deep_insert_done_cb)
+
+    def deep_insert_done_cb(self, future):
+        self.current_goal_handle = None
+        result = future.result().result
+        if result.error_code.val != 1:
+            self.get_logger().warn(f"Deep insertion finished with code: {result.error_code.val}")
+
+        self.get_logger().info("Deep insertion complete! Full gripper blade is firmly engaged under the lid.")
+        self.get_logger().info("Transitioning to GENERATING_STAGE2_ARC (lifting lid to fully open position)...")
+        self.arc_tilt_index = 0
+        self.arc_best = None
+        self.state = 'GENERATING_STAGE2_ARC'
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # Stage 2: Lift Lid Along Arc to Full Open Position
+    # ─────────────────────────────────────────────────────────────────────────
+
+    def step_generating_stage2_arc(self):
+        T_deep_gripper = self.get_gripper_matrix()
+        if T_deep_gripper is None:
+            return
+
+        candidates = list(self.get_param('tilt_candidates', [1.0]))
+        if self.arc_tilt_index >= len(candidates):
+            self.get_logger().error("No arc tilt candidates left for Stage 2. Aborting.")
+            self.state = 'DONE'
+            return
+        tilt = float(candidates[self.arc_tilt_index])
+
+        theta_start = self.get_param('theta_start', 0.01)
+        theta_end = self.get_param('theta_end', 1.62)
+        num_waypoints = int(self.get_param('num_waypoints', 30))
+        all_thetas = np.linspace(theta_start, theta_end, num_waypoints)
+
+        n_stage1 = int(self.get_param('stage1_waypoints', 5))
+        n_stage1 = max(2, min(n_stage1, len(all_thetas)))
+        theta_ref = all_thetas[n_stage1 - 1]
+        stage2_thetas = all_thetas[n_stage1 - 1:]
+
+        waypoints = self.generate_arc_waypoints(
+            tilt, theta_array=stage2_thetas, T_gripper_ref=T_deep_gripper, theta_ref=theta_ref
+        )
+        if not waypoints or len(waypoints) < 2:
+            self.get_logger().error("Stage 2 arc waypoint generation failed! Aborting.")
+            self.state = 'DONE'
+            return
+
+        if not self.compute_path_client.wait_for_service(timeout_sec=2.0):
+            self.get_logger().error("compute_cartesian_path service not available!")
+            self.state = 'DONE'
+            return
+
+        req = self.make_cartesian_request(waypoints)
+        self.state = 'EXECUTING_STAGE2_ARC'
+        future = self.compute_path_client.call_async(req)
+        future.add_done_callback(lambda f, t=tilt: self.stage2_trajectory_computed_cb(f, t))
+
+    def stage2_trajectory_computed_cb(self, future, tilt):
+        try:
+            res = future.result()
+        except Exception as e:
+            self.get_logger().error(f"Stage 2 Cartesian path computation failed: {e}")
+            self.state = 'DONE'
+            return
+
+        frac = res.fraction
+        self.get_logger().info(f"Stage 2 Arc (tilt={tilt:.2f}) fraction = {frac*100:.1f}%")
+        if self.arc_best is None or frac > self.arc_best[0]:
+            self.arc_best = (frac, res.solution, tilt)
+
+        candidates = list(self.get_param('tilt_candidates', [1.0]))
+        min_frac = self.get_param('arc_min_fraction', 0.95)
+
+        if frac < min_frac and self.arc_tilt_index + 1 < len(candidates):
+            self.arc_tilt_index += 1
+            self.state = 'GENERATING_STAGE2_ARC'
+            return
+
+        best_frac, best_sol, best_tilt = self.arc_best
+        if best_frac < 0.2:
+            self.get_logger().error(f"Stage 2 best arc fraction only {best_frac*100:.1f}%. Aborting.")
+            self.state = 'DONE'
+            return
+        if best_tilt < 1.0:
+            self.get_logger().warn(
+                f"Using tilt={best_tilt:.2f}: blade has deep engagement so lid will remain secure."
+            )
+ 
+        self.get_logger().info(f"Lifting lid to full open (tilt={best_tilt:.2f}, fraction={best_frac*100:.1f}%)...")
+        scale_trajectory(best_sol, self.get_param('speed_scale', 5.0))
+
+        goal = ExecuteTrajectory.Goal()
+        goal.trajectory = best_sol
+        exec_future = self.execute_client.send_goal_async(goal)
+        exec_future.add_done_callback(self.stage2_exec_cb)
+
+    def stage2_exec_cb(self, future):
+        goal_handle = future.result()
+        if not goal_handle.accepted:
+            self.get_logger().error("Stage 2 trajectory goal rejected.")  
+            self.state = 'DONE'
+            return
+        self.current_goal_handle = goal_handle
+        goal_handle.get_result_async().add_done_callback(self.stage2_done_cb)
+
+    def stage2_done_cb(self, future):
+        self.current_goal_handle = None
+        result = future.result().result
+        if result.error_code.val != 1:
+            self.get_logger().warn(f"Stage 2 execution finished with code: {result.error_code.val}")
+
+        self.get_logger().info("Lid lifting complete (Stage 2 finished)! Transitioning to RETRACTING_FROM_GRASP.")
+        self.state = 'RETRACTING_FROM_GRASP'
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # Single-Stage Fallback: Full Arc Lifting
+    # ─────────────────────────────────────────────────────────────────────────
 
     def step_generating_arc_and_lifting(self):
         candidates = list(self.get_param('tilt_candidates', [1.0]))

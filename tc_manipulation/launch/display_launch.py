@@ -63,7 +63,7 @@ def generate_launch_description():
             "-topic", "robot_description",
             "-name", "toilet_manipulation",
             "-allow_renaming", "true",
-            "-x", "2.3", "-y", "0.0", "-z", "0.3",
+            "-x", "1.3", "-y", "0.0", "-z", "0.3",
             "-Y", "3.14159"
         ],
         parameters=[{"use_sim_time": True}],
@@ -106,7 +106,7 @@ def generate_launch_description():
         executable="static_transform_publisher",
         name="static_tf_odom",
         arguments=[
-            "--x", "2.3",
+            "--x", "1.3",
             "--y", "0.0",
             "--z", "0.035",
             "--yaw", "3.14159",
