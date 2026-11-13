@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # TC Manipulation: Autonomous Mobile Manipulation for Restroom Maintenance
 
 [![ROS 2](https://img.shields.io/badge/ROS_2-Jazzy_Jalisco-blue.svg)](https://docs.ros.org/en/jazzy/)
@@ -405,3 +406,7 @@ ros2 run tc_manipulation clean_split_dataset
 - **Developer / Maintainer**: Arumugam Akash ([arumugamakashn@gmail.com](mailto:arumugamakashn@gmail.com))
 - **License**: BSD-3-Clause
 
+=======
+# toilet_cleaning
+TC Manipulation: Autonomous Mobile Manipulation for Restroom Maintenance
+>>>>>>> 6a8499bf2ecb826b30afc701acf66a4d584895f5
